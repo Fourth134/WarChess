@@ -40,22 +40,22 @@ public class view : MonoBehaviour
         if (Input.GetKey(KeyCode.W))
         {
             //键盘控制物品前后左右移动，调用函数Translate
-            m_Transform.Translate(Vector3.forward * 0.1f, Space.Self);
+            m_Transform.Translate(Vector3.forward * 0.05f, Space.Self);
         }
 
         if (Input.GetKey(KeyCode.S))
         {
-            m_Transform.Translate(Vector3.back * 0.1f, Space.Self);
+            m_Transform.Translate(Vector3.back * 0.05f, Space.Self);
         }
 
         if (Input.GetKey(KeyCode.A))
         {
-            m_Transform.Translate(Vector3.left * 0.1f, Space.Self);
+            m_Transform.Translate(Vector3.left * 0.05f, Space.Self);
         }
 
         if (Input.GetKey(KeyCode.D))
         {
-            m_Transform.Translate(Vector3.right * 0.1f, Space.Self);
+            m_Transform.Translate(Vector3.right * 0.05f, Space.Self);
         }
         if (Input.GetAxis("Mouse ScrollWheel")!=0)
         {

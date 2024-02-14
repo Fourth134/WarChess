@@ -31,9 +31,9 @@ public class plane : MonoBehaviour
                 Vector3 currentPosition = currentObjectTransform.position;// 获取当前单位物体的当前位置（世界坐标）
                 DistanceX = currentPosition.x - thisObjectPosition.x;
                 DistanceZ = currentPosition.z - thisObjectPosition.z;
-                if (DistanceX < 5 && DistanceZ < 5)
+                if (DistanceX < 0.5 && DistanceZ < 0.5)
                 {
-                    if (DistanceX > -5 && DistanceZ > -5)
+                    if (DistanceX > -0.5 && DistanceZ > -0.5)
                     {
                         gameManager.CurrentObject.transform.position = thisObjectPosition;
                         gameManager.set = false;

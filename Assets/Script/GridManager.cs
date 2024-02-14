@@ -12,6 +12,7 @@ public class GridManager : MonoBehaviour
     [SerializeField] private ChessTile _tilePrefad;
 
     [SerializeField] private Transform _cam;
+    [SerializeField] private Transform _camcontrol;
 
     private Dictionary<Vector2, ChessTile> _tiles;
 
@@ -38,8 +39,8 @@ public class GridManager : MonoBehaviour
             }
         }
 
-        _cam.transform.position = new Vector3((float)_width/2 - 0.5f,10,(float)_height / 2 - 0.5f);
-        _cam.transform.Rotate(Vector3.right,90);
+        _camcontrol.transform.position = new Vector3((float)_width/2 - 0.5f,10,(float)_height / 2 - 0.5f - 10);
+        _cam.transform.Rotate(Vector3.right,45);
     }
 
     public ChessTile GetChessTileAtPosition(Vector2 pos)//通过给定坐标，返回特定的ChessTile对象。

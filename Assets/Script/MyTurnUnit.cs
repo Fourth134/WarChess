@@ -8,7 +8,7 @@ public class MyTurnUnit : MonoBehaviour
     private Color defaultColor;
     private MeshRenderer meshRenderer;//材质
     private bool isShowTip = false;
-    private string itemName = "Object Information"; // Replace with your object's information text
+    public string itemName = "Object Information"; // Replace with your object's information text
     private float initialYPos;//平台接触点
     private Plane dragPlane;//平台
 
