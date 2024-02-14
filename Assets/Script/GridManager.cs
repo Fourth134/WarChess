@@ -13,6 +13,7 @@ public class GridManager : MonoBehaviour
 
     [SerializeField] private Transform _cam;
 
+    private Dictionary<Vector2, ChessTile> _tiles;
 
     void Start()
     {
@@ -21,7 +22,8 @@ public class GridManager : MonoBehaviour
 
     void GenerateGrid()
     {
-        for(int x = 0; x < _width; x++)
+        _tiles = new Dictionary<Vector2, ChessTile>();
+        for (int x = 0; x < _width; x++)
         {
             for(int y = 0; y < _height; y++)
             {
@@ -30,6 +32,9 @@ public class GridManager : MonoBehaviour
 
                 var isOffset = (x % 2 == 0 && y % 2 != 0) || (y % 2 == 0 && x % 2 != 0);
                 spawnedTile.Init(isOffset);
+
+                _tiles[new Vector2(x,y)] = spawnedTile;
+
             }
         }
 
@@ -37,4 +42,12 @@ public class GridManager : MonoBehaviour
         _cam.transform.Rotate(Vector3.right,90);
     }
 
+    public ChessTile GetChessTileAtPosition(Vector2 pos)//通过给定坐标，返回特定的ChessTile对象。
+    {
+        if(_tiles.TryGetValue(pos, out var tile))
+        {
+            return tile;
+        }
+        return null;
+    }
 }
