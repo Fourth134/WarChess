@@ -13,6 +13,7 @@ public class GridManager : MonoBehaviour
 
     [SerializeField] private Transform _cam;
     [SerializeField] private Transform _camcontrol;
+    [SerializeField] private float tileSize = 5f; // 棋盘格子大小
 
     private Dictionary<Vector2, ChessTile> _tiles;
 
@@ -24,24 +25,30 @@ public class GridManager : MonoBehaviour
     void GenerateGrid()
     {
         _tiles = new Dictionary<Vector2, ChessTile>();
+
         for (int x = 0; x < _width; x++)
         {
-            for(int y = 0; y < _height; y++)
+            for (int y = 0; y < _height; y++)
             {
-                var spawnedTile = Instantiate(_tilePrefad, new Vector3(x, 0, y), Quaternion.identity);
+                // 计算新的格子位置
+                Vector3 newPosition = new Vector3(x * tileSize, 0, y * tileSize);
+
+                var spawnedTile = Instantiate(_tilePrefad, newPosition, Quaternion.identity);
                 spawnedTile.name = $"Tile {x} {y}";
 
                 var isOffset = (x % 2 == 0 && y % 2 != 0) || (y % 2 == 0 && x % 2 != 0);
                 spawnedTile.Init(isOffset);
 
-                _tiles[new Vector2(x,y)] = spawnedTile;
-
+                _tiles[new Vector2(x, y)] = spawnedTile;
             }
         }
 
-        _camcontrol.transform.position = new Vector3((float)_width/2 - 0.5f,10,(float)_height / 2 - 0.5f - 10);
-        _cam.transform.Rotate(Vector3.right,45);
+        // 设置摄像机的位置和旋转
+        _camcontrol.transform.position = new Vector3(-5, 10, -5);
+        _cam.transform.Rotate(Vector3.right, 40);
+        _camcontrol.transform.Rotate(Vector3.up, 40);
     }
+
 
     public ChessTile GetChessTileAtPosition(Vector2 pos)//通过给定坐标，返回特定的ChessTile对象。
     {

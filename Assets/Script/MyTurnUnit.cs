@@ -75,7 +75,7 @@ public class MyTurnUnit : MonoBehaviour
         if (isShowTip)
         {
             GUIStyle style = new GUIStyle();
-            style.fontSize = 20;
+            style.fontSize = 60;
             style.normal.textColor = Color.blue;
             GUI.Label(new Rect(Input.mousePosition.x - 100, Screen.height - Input.mousePosition.y + 30, 100, 100), itemName, style);
         }

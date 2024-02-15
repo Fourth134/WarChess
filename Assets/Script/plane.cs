@@ -11,6 +11,8 @@ public class plane : MonoBehaviour
 
     public Vector3 thisObjectPosition;
     public GameManager gameManager;
+    private string objectName; // 用于存储当前游戏对象的名称
+
     // Start is called before the first frame update
     void Start()
     {
@@ -18,6 +20,19 @@ public class plane : MonoBehaviour
 
         Transform thisObjectTransform = transform;
         thisObjectPosition = thisObjectTransform.position;// 获取当前平台物体的当前位置（世界坐标）
+
+        // 获取当前游戏对象的名称
+        objectName = gameObject.name;
+
+        // 检查当前游戏对象的名称是否在 GameManager 的 landProperties 数组中，如果是，则将 sea 设置为 false
+        foreach (string landProperty in gameManager.landProperties)
+        {
+            if (landProperty == objectName)
+            {
+                sea = false;
+                break;
+            }
+        }
     }
 
     // Update is called once per frame
@@ -31,15 +46,35 @@ public class plane : MonoBehaviour
                 Vector3 currentPosition = currentObjectTransform.position;// 获取当前单位物体的当前位置（世界坐标）
                 DistanceX = currentPosition.x - thisObjectPosition.x;
                 DistanceZ = currentPosition.z - thisObjectPosition.z;
-                if (DistanceX < 0.5 && DistanceZ < 0.5)
+
+                if (currentPosition.x > 42.5f || currentPosition.z > 42.5f || currentPosition.x < -2.5f || currentPosition.z < -2.5f)//超出地图边界
                 {
-                    if (DistanceX > -0.5 && DistanceZ > -0.5)
-                    {
-                        gameManager.CurrentObject.transform.position = thisObjectPosition;
-                        gameManager.set = false;
-                    }
+                    Turnback();
                 }
+                else if (DistanceX < 2.5 && DistanceZ < 2.5 && DistanceX > -2.5 && DistanceZ > -2.5)
+                {
+                    gameManager.CurrentObject.transform.position = new Vector3(thisObjectPosition.x, gameManager.CurrentObject.transform.position.y + 0.025f, thisObjectPosition.z);
+                    gameManager.set = false;
+                    DistanceX = 0;
+                    DistanceZ = 0;
+                    gameManager.CurrentObjectX = thisObjectPosition.x;
+                    gameManager.CurrentObjectZ = thisObjectPosition.z;
+                }
+
             }
-        }    
+        }
+        else
+        {
+            if (gameManager.set)
+            {
+                Turnback();
+            }
+        }
+    }
+
+    public void Turnback()
+    {
+        gameManager.CurrentObject.transform.position = new Vector3(gameManager.CurrentObjectX, 0.25f, gameManager.CurrentObjectX);
+        gameManager.set = false;
     }
 }
