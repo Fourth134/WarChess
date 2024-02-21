@@ -5,10 +5,14 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public GameObject CurrentObject;
-    public bool set = false;
+    public GameObject CurrentSealand;
+    public bool set = false;//判断是否触发棋盘中心吸附
+    public bool ShowRangHighlight = false;//判断距离高光显示
+
+    public bool RoundMove;
 
     public float CurrentObjectX;
-    public float CurrentObjectZ; //当前控制物体坐标
+    public float CurrentObjectZ; //当前控制物体记录的上一次正确坐标
 
     
     public string[] landProperties;// String数组，用于存储地块的属性
