@@ -13,8 +13,8 @@ public class ChessTile : MonoBehaviour
     public Vector3 thisObjectPosition;//当前棋盘区域坐标
     public GameManager gameManager;
     private string objectName; // 用于存储当前游戏对象的名称
-    private float moveRange;//储存舰船的移动距离
-    public GameObject MoverangeHighlight;
+    public GameObject MoverangeHighlight;//储存绿色高光
+    public GameObject AttackrangeHighlight;//储存红色高光
 
     void Start()
     {
@@ -42,6 +42,7 @@ public class ChessTile : MonoBehaviour
     {
         showHighlight();//拖动时高光显示判断
         ChessbordAdsorption();//棋盘吸附判断
+        AttackMode();//打开攻击模式判断
     }
     public void Init(bool isOffset)
     {
@@ -65,11 +66,17 @@ public class ChessTile : MonoBehaviour
             if (gameManager.ShowRangHighlight)//显示移动距离高光
             {
                 MyTurnUnit turnUnit = gameManager.CurrentObject.GetComponent<MyTurnUnit>();
-                moveRange = turnUnit.moverange;
+                float moveRange = turnUnit.moverange;
                 if (thisObjectPosition.x - gameManager.CurrentObjectX < moveRange && thisObjectPosition.z - gameManager.CurrentObjectZ < moveRange && thisObjectPosition.x - gameManager.CurrentObjectX > -moveRange && thisObjectPosition.z - gameManager.CurrentObjectZ > -moveRange)
                 {
-
-                    MoverangeHighlight.SetActive(true);
+                    if (gameManager.RoundMove)
+                    {
+                        MoverangeHighlight.SetActive(true);
+                    }
+                    else
+                    {
+                        MoverangeHighlight.SetActive(false);
+                    }
                 }
             }
             else
@@ -88,22 +95,56 @@ public class ChessTile : MonoBehaviour
             float DistanceZ = currentPosition.z - thisObjectPosition.z;
             if (Mathf.Abs(DistanceX) < 2.5 && Mathf.Abs(DistanceZ) < 2.5)
             {
-                if (sea)
+                if (gameManager.RoundMove)
                 {
-                    gameManager.CurrentObject.transform.position = new Vector3(thisObjectPosition.x, gameManager.CurrentObject.transform.position.y + 0.025f, thisObjectPosition.z);
-                    gameManager.set = false;
-                    gameManager.CurrentSealand = gameObject;
-                    gameManager.CurrentObjectX = thisObjectPosition.x;
-                    gameManager.CurrentObjectZ = thisObjectPosition.z;
-                    gameManager.CurrentObject = null;
+                    if (sea)
+                    {
+                        gameManager.CurrentObject.transform.position = new Vector3(thisObjectPosition.x, gameManager.CurrentObject.transform.position.y + 0.025f, thisObjectPosition.z);
+                        gameManager.set = false;
+                        gameManager.CurrentSealand = gameObject;
+                        gameManager.CurrentObjectX = thisObjectPosition.x;
+                        gameManager.CurrentObjectZ = thisObjectPosition.z;
+                        gameManager.RoundMove = false;//每回合移动限制
+                    }
+                    else
+                    {
+                        MyTurnUnit turnUnit = gameManager.CurrentObject.GetComponent<MyTurnUnit>();
+                        turnUnit.Turnback();
+                        print("该区域不是海洋");
+                    }
                 }
                 else
                 {
                     MyTurnUnit turnUnit = gameManager.CurrentObject.GetComponent<MyTurnUnit>();
                     turnUnit.Turnback();
-                    print("该区域不是海洋");
+                    print("本回合已经移动过");
                 }
             }
+        }
+    }
+    public void AttackMode()
+    {
+        if (gameManager.attackmode)
+        {
+            Transform currentObjectTransform = gameManager.CurrentObject.transform;
+            Vector3 currentPosition = currentObjectTransform.position;// 获取当前舰船的当前位置（世界坐标）
+            float AttackDistanceX = currentPosition.x - thisObjectPosition.x;
+            float AttackDistanceZ = currentPosition.z - thisObjectPosition.z;//获取距离
+
+            MyTurnUnit turnUnit = gameManager.CurrentObject.GetComponent<MyTurnUnit>();
+            float attackRange = turnUnit.attackrange;
+            if (Mathf.Abs(AttackDistanceX) < attackRange && Mathf.Abs(AttackDistanceZ) < attackRange)
+            {
+                AttackrangeHighlight.SetActive(true);
+            }
+            else
+            {
+                AttackrangeHighlight.SetActive(false);
+            }
+        }
+        else
+        {
+            AttackrangeHighlight.SetActive(false);
         }
     }
 }

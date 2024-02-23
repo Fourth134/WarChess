@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class MyTurnUnit : MonoBehaviour
@@ -14,7 +15,9 @@ public class MyTurnUnit : MonoBehaviour
     public Vector3 thisShipPosition;
     public GameManager gameManager;
     public GameObject ThisObj;
-    public float moverange;
+    public float moverange;//移动距离
+    public float attackrange;//攻击距离
+
 
     void Start()
     {
@@ -52,10 +55,9 @@ public class MyTurnUnit : MonoBehaviour
 
     public void OnMouseUp()
     {
-        
-        gameManager.set = true;
-        gameManager.ShowRangHighlight = false;
         Boundary();
+        gameManager.set = true;
+        gameManager.ShowRangHighlight = false;      
         //gameManager.CurrentObject = null;
     }
 
@@ -95,10 +97,16 @@ public class MyTurnUnit : MonoBehaviour
     {
         Transform thisShipTransform = transform;
         thisShipPosition = thisShipTransform.position;// 获取当前平台物体的当前位置（世界坐标）
-        if (thisShipPosition.x > 42.5f || thisShipPosition.z > 42.5f || thisShipPosition.x < -2.5f || thisShipPosition.z < -2.5f)
+        if (thisShipPosition.x > 42.5f || thisShipPosition.z > 42.5f || thisShipPosition.x < -2.5f || thisShipPosition.z < -2.5f)//判断边界
         {
             Turnback();
             print("该区域不在战区内");
         }
+        else if (Mathf.Abs(thisShipPosition.x - gameManager.CurrentObjectX) > moverange || Mathf.Abs(thisShipPosition.z - gameManager.CurrentObjectZ) > moverange)//判断超出移动距离
+        {
+            Turnback();
+            print("移动距离超出限制");
+        }
+
     }
 }
