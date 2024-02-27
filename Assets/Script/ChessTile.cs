@@ -15,6 +15,7 @@ public class ChessTile : MonoBehaviour
     private string objectName; // 用于存储当前游戏对象的名称
     public GameObject MoverangeHighlight;//储存绿色高光
     public GameObject AttackrangeHighlight;//储存红色高光
+    public bool EnemyExist;
 
     void Start()
     {
@@ -35,6 +36,15 @@ public class ChessTile : MonoBehaviour
                 break;
             }
         }
+        //检查当前游戏对象是否有敌人
+        foreach (string enemyProperty in gameManager.landEnemyExist)
+        {
+            if (enemyProperty == objectName)
+            {
+                EnemyExist = true;
+                break;
+            }
+        }
     }
 
     // Update is called once per frame
@@ -42,7 +52,7 @@ public class ChessTile : MonoBehaviour
     {
         showHighlight();//拖动时高光显示判断
         ChessbordAdsorption();//棋盘吸附判断
-        AttackMode();//打开攻击模式判断
+        AttackMode();//打开地图攻击模式判断
     }
     public void Init(bool isOffset)
     {
@@ -145,6 +155,30 @@ public class ChessTile : MonoBehaviour
         else
         {
             AttackrangeHighlight.SetActive(false);
+        }
+    }
+    public void OnMouseDown()
+    {
+        if (gameManager.attackmode)
+        {
+            if (gameManager.Roundaction)
+            {
+                print("飞机起飞前往"+ objectName+"进行攻击");
+                if (EnemyExist)
+                {
+                    print("攻击命中");
+                }
+                else
+                {
+                    print("该区域未发现敌人");
+                }
+                gameManager.Roundaction = false;
+                gameManager.attackmode = false;//关闭攻击模式高光显示
+            }
+            else
+            {
+                print("本回合已经进行动作");
+            }
         }
     }
 }

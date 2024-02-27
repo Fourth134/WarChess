@@ -19,7 +19,8 @@ public class GameManager : MonoBehaviour
     public float CurrentObjectZ; //当前控制物体记录的上一次正确坐标
 
     
-    public string[] landProperties;// String数组，用于存储地块的属性
+    public string[] landProperties;// String数组，用于存储地块是否为海洋
+    public string[] landEnemyExist;// String数组，用于存储地块是否存在敌人
 
     // Start is called before the first frame update
     void Start()
@@ -38,6 +39,7 @@ public class GameManager : MonoBehaviour
         RoundMove = true;
         print("现在是"+ TurnNum+"回合");
         attackmode = false;
+        Roundaction = true;
     }
 
     public void AttackSwitch()
