@@ -15,6 +15,7 @@ public class ChessTile : MonoBehaviour
     private string objectName; // 用于存储当前游戏对象的名称
     public GameObject MoverangeHighlight;//储存绿色高光
     public GameObject AttackrangeHighlight;//储存红色高光
+    public GameObject ScoutrangHighlight;//储存黄色高光
     public bool EnemyExist;
 
     void Start()
@@ -53,6 +54,7 @@ public class ChessTile : MonoBehaviour
         showHighlight();//拖动时高光显示判断
         ChessbordAdsorption();//棋盘吸附判断
         AttackMode();//打开地图攻击模式判断
+        ScoutMode();//打开地图侦察模式判断
     }
     public void Init(bool isOffset)
     {
@@ -155,6 +157,31 @@ public class ChessTile : MonoBehaviour
         else
         {
             AttackrangeHighlight.SetActive(false);
+        }
+    }
+    public void ScoutMode()
+    {
+        if (gameManager.scoutmode)
+        {
+            Transform currentObjectTransform = gameManager.CurrentObject.transform;
+            Vector3 currentPosition = currentObjectTransform.position;// 获取当前舰船的当前位置（世界坐标）
+            float AttackDistanceX = currentPosition.x - thisObjectPosition.x;
+            float AttackDistanceZ = currentPosition.z - thisObjectPosition.z;//获取距离
+
+            MyTurnUnit turnUnit = gameManager.CurrentObject.GetComponent<MyTurnUnit>();
+            float ScoutRange = turnUnit.scoutrange;
+            if (Mathf.Abs(AttackDistanceX) < ScoutRange && Mathf.Abs(AttackDistanceZ) < ScoutRange)
+            {
+                ScoutrangHighlight.SetActive(true);
+            }
+            else
+            {
+                ScoutrangHighlight.SetActive(false);
+            }
+        }
+        else
+        {
+            ScoutrangHighlight.SetActive(false);
         }
     }
     public void OnMouseDown()

@@ -17,6 +17,7 @@ public class MyTurnUnit : MonoBehaviour
     public GameObject ThisObj;
     public float moverange;//ÒÆ¶¯¾àÀë
     public float attackrange;//¹¥»÷¾àÀë
+    public float scoutrange;//Õì²ì¾àÀë
 
 
     void Start()
