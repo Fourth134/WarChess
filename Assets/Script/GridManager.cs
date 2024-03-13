@@ -7,7 +7,7 @@ using UnityEngine.Tilemaps;
 
 public class GridManager : MonoBehaviour
 {
-    [SerializeField] private int _width, _height;
+    [SerializeField] public int _width, _height;
 
     [SerializeField] private ChessTile _tilePrefad;
 
