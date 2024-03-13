@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class ChessTile : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class ChessTile : MonoBehaviour
     [SerializeField] private MeshRenderer _renderer;
     [SerializeField] private GameObject _highlight;
     [SerializeField] public bool sea;
+    [SerializeField] public bool EnemyExist;
 
     public Vector3 thisObjectPosition;//当前棋盘区域坐标
     public GameManager gameManager;
@@ -16,7 +18,6 @@ public class ChessTile : MonoBehaviour
     public GameObject MoverangeHighlight;//储存绿色高光
     public GameObject AttackrangeHighlight;//储存红色高光
     public GameObject ScoutrangHighlight;//储存黄色高光
-    public bool EnemyExist;
 
     void Start()
     {
@@ -38,17 +39,17 @@ public class ChessTile : MonoBehaviour
             }
         }
         //检查当前游戏对象是否有敌人
-        foreach (string enemyProperty in gameManager.landEnemyExist)
+        EnemyExist = gameManager.landEnemyExist.Contains(gameObject.name);
+        /*foreach (string enemyProperty in gameManager.landEnemyExist)
         {
             if (enemyProperty == objectName)
             {
                 EnemyExist = true;
                 break;
             }
-        }
+        }*/
     }
 
-    // Update is called once per frame
     void Update()
     {
         showHighlight();//拖动时高光显示判断
@@ -63,12 +64,18 @@ public class ChessTile : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        _highlight.SetActive(true);
+        if (!EventSystem.current.IsPointerOverGameObject())
+        {
+            _highlight.SetActive(true);
+        }
     }
 
     private void OnMouseExit()
     {
-        _highlight.SetActive(false);
+        if (!EventSystem.current.IsPointerOverGameObject())
+        {
+            _highlight.SetActive(false);
+        }
     }
 
     private void showHighlight()
@@ -186,25 +193,49 @@ public class ChessTile : MonoBehaviour
     }
     public void OnMouseDown()
     {
-        if (gameManager.attackmode)
+        if (!EventSystem.current.IsPointerOverGameObject())
         {
-            if (gameManager.Roundaction)
+            if (gameManager.attackmode)
             {
-                print("飞机起飞前往"+ objectName+"进行攻击");
-                if (EnemyExist)
+                if (gameManager.Roundaction)
                 {
-                    print("攻击命中");
+                    print("飞机起飞前往" + objectName + "进行攻击");
+                    if (EnemyExist)
+                    {
+                        print("攻击命中");
+                    }
+                    else
+                    {
+                        print("该区域未发现敌人");
+                    }
+                    gameManager.Roundaction = false;
+                    gameManager.attackmode = false;//关闭攻击模式高光显示
                 }
                 else
                 {
-                    print("该区域未发现敌人");
+                    print("本回合已经进行动作");
                 }
-                gameManager.Roundaction = false;
-                gameManager.attackmode = false;//关闭攻击模式高光显示
             }
-            else
+            else if (gameManager.scoutmode)
             {
-                print("本回合已经进行动作");
+                if (gameManager.Scoutaction == 0)//侦察方法
+                {
+                    print("飞机起飞前往" + objectName + "进行侦察");
+                    if (EnemyExist)
+                    {
+                        print("侦察机发现敌人");
+                    }
+                    else
+                    {
+                        print("该区域未发现敌人");
+                    }
+                    gameManager.Scoutaction++;
+                    gameManager.scoutmode = false;//关闭侦察模式高光显示
+                }
+                else
+                {
+                    print("侦察机已经起飞");
+                }
             }
         }
     }

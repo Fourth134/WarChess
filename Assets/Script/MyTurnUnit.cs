@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class MyTurnUnit : MonoBehaviour
 {
@@ -34,32 +35,44 @@ public class MyTurnUnit : MonoBehaviour
 
     public void OnMouseEnter()
     {
-        isShowTip = true;
-        meshRenderer.material.color = focusColor;
+        if (!EventSystem.current.IsPointerOverGameObject())
+        {
+            isShowTip = true;
+            meshRenderer.material.color = focusColor;
+        }
     }
 
     public void OnMouseExit()
     {
-        isShowTip = false;
-        meshRenderer.material.color = defaultColor;
-        gameManager.ShowRangHighlight = false;
+        if (!EventSystem.current.IsPointerOverGameObject())
+        {
+            isShowTip = false;
+            meshRenderer.material.color = defaultColor;
+            gameManager.ShowRangHighlight = false;
+        }           
     }
 
     public void OnMouseDrag()
     {
-        gameManager.ShowRangHighlight = true;
-        gameManager.CurrentObject = ThisObj;
-        Vector3 newPos = GetMousePos();
-        // 限制鼠标在平面内移动
-        transform.position = newPos;
+        if (!EventSystem.current.IsPointerOverGameObject())
+        {
+            gameManager.ShowRangHighlight = true;
+            gameManager.CurrentObject = ThisObj;
+            Vector3 newPos = GetMousePos();
+            // 限制鼠标在平面内移动
+            transform.position = newPos;
+        }
     }
 
     public void OnMouseUp()
     {
-        Boundary();
-        gameManager.set = true;
-        gameManager.ShowRangHighlight = false;      
-        //gameManager.CurrentObject = null;
+        if (!EventSystem.current.IsPointerOverGameObject())
+        {
+            Boundary();
+            gameManager.set = true;
+            gameManager.ShowRangHighlight = false;
+            //gameManager.CurrentObject = null;
+        }
     }
 
     public void Turnback()//返回原位置方法
