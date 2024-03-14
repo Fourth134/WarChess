@@ -10,21 +10,25 @@ public class ChessTile : MonoBehaviour
     [SerializeField] private MeshRenderer _renderer;
     [SerializeField] private GameObject _highlight;
     [SerializeField] public bool sea;
-    [SerializeField] public bool EnemyExist;
 
     public Vector3 thisObjectPosition;//当前棋盘区域坐标
+
     public GameManager gameManager;
+    public Intelligence intelligence;//引用情报脚本
+
     private string objectName; // 用于存储当前游戏对象的名称
     public GameObject MoverangeHighlight;//储存绿色高光
     public GameObject AttackrangeHighlight;//储存红色高光
     public GameObject ScoutrangHighlight;//储存黄色高光
 
+
     void Start()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        intelligence = GameObject.Find("IntellManager").GetComponent<Intelligence>();
 
         Transform thisObjectTransform = transform;
-        thisObjectPosition = thisObjectTransform.position;// 获取当前平台的当前位置（世界坐标）
+        thisObjectPosition = thisObjectTransform.position; // 获取当前平台的当前位置（世界坐标）
 
         // 获取当前游戏对象的名称
         objectName = gameObject.name;
@@ -38,16 +42,6 @@ public class ChessTile : MonoBehaviour
                 break;
             }
         }
-        //检查当前游戏对象是否有敌人
-        EnemyExist = gameManager.landEnemyExist.Contains(gameObject.name);
-        /*foreach (string enemyProperty in gameManager.landEnemyExist)
-        {
-            if (enemyProperty == objectName)
-            {
-                EnemyExist = true;
-                break;
-            }
-        }*/
     }
 
     void Update()
@@ -199,8 +193,10 @@ public class ChessTile : MonoBehaviour
             {
                 if (gameManager.Roundaction)
                 {
+
                     print("飞机起飞前往" + objectName + "进行攻击");
-                    if (EnemyExist)
+                    bool enemyFound = gameManager.enemyPosition == objectName;
+                    if (enemyFound)
                     {
                         print("攻击命中");
                     }
@@ -218,23 +214,29 @@ public class ChessTile : MonoBehaviour
             }
             else if (gameManager.scoutmode)
             {
-                if (gameManager.Scoutaction == 0)//侦察方法
+                if (gameManager.Scoutaction == 0) // 侦察逻辑
                 {
-                    print("飞机起飞前往" + objectName + "进行侦察");
-                    if (EnemyExist)
+                    // 判断当前点击的瓦片是否是敌人所在的位置
+                    bool enemyFound = gameManager.enemyPosition == objectName;
+
+                    // 根据是否发现敌人进行不同的操作
+                    if (enemyFound)
                     {
-                        print("侦察机发现敌人");
+                        print($"飞机起飞前往 {objectName} 进行侦察。侦察机发现敌人。");
+                        // 调用Intelligence脚本的ShowEnemyInfo方法，以展示敌人的下一步预计移动
+                        intelligence.ShowEnemyInfo(gameManager.enemyPosition, gameManager.nextEnemyPosition, gameManager.TurnNum, objectName);
                     }
                     else
                     {
-                        print("该区域未发现敌人");
+                        print($"飞机起飞前往 {objectName} 进行侦察。该区域未发现敌人。");
                     }
+
                     gameManager.Scoutaction++;
-                    gameManager.scoutmode = false;//关闭侦察模式高光显示
+                    gameManager.scoutmode = false; // 关闭侦察模式高光显示
                 }
                 else
                 {
-                    print("侦察机已经起飞");
+                    print("侦察机已经起飞。");
                 }
             }
         }

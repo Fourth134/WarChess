@@ -27,8 +27,8 @@ public class GameManager : MonoBehaviour
 
     
     public string[] landProperties;// String数组，用于存储地块是否为海洋
-    public List<string> landEnemyExist = new List<string>();// List，用于存储地块是否存在敌人 
-    private Dictionary<string, string> nextEnemyPositions = new Dictionary<string, string>(); // 存储敌人下一步预计的位置
+    public string enemyPosition; // 替换原来的 landEnemyExist 列表，现在只追踪一个敌人的位置
+    public string nextEnemyPosition; // 预计下一回合敌人的位置
 
 
     // Start is called before the first frame update
@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         CalculateNextEnemyMove(); // 游戏开始时计算敌人的第一步
+        EnemyInfo();
     }
 
     public void NextTurn()
@@ -44,14 +45,12 @@ public class GameManager : MonoBehaviour
         RoundMove = true;
         print("现在是" + TurnNum + "回合");
 
-        // 在回合开始前打印敌人信息
-        EnemyInfo();
-
         // 根据预计的移动信息实际移动敌人
         ApplyEnemyMoves();
-
         // 为下一回合计算新的移动
         CalculateNextEnemyMove();
+        // 在下回合开始前打印敌人信息
+        EnemyInfo();
 
         // 更新其他游戏状态
         attackmode = false;
@@ -102,65 +101,51 @@ public class GameManager : MonoBehaviour
 
     private void CalculateNextEnemyMove()
     {
-        nextEnemyPositions.Clear(); // 清除上一回合的移动信息
+        // 清除上一回合的移动信息
+        bool isValidMove = false;
+        int attemptCount = 0; // 避免无限循环
+        int x, y, newX = 0, newY = 0;
 
-        foreach (var currentLocation in landEnemyExist)
+        string[] parts = enemyPosition.Split(' ');
+        x = int.Parse(parts[1]);
+        y = int.Parse(parts[2]);
+
+        while (!isValidMove && attemptCount < 10)
         {
-            string[] parts = currentLocation.Split(' ');
-            int x = int.Parse(parts[1]);
-            int y = int.Parse(parts[2]);
+            attemptCount++;
+            int directionX = Random.Range(-EnemymoveDistance, EnemymoveDistance + 1);
+            int directionY = Random.Range(-EnemymoveDistance, EnemymoveDistance + 1);
 
-            bool isValidMove = false;
-            int newX = x, newY = y;
-            int attemptCount = 0; // 避免无限循环
+            newX = Mathf.Clamp(x + directionX, 0, gridManager._width - 1);
+            newY = Mathf.Clamp(y + directionY, 0, gridManager._height - 1);
 
-            while (!isValidMove && attemptCount < 10)
+            string potentialNewLocation = $"Tile {newX} {newY}";
+
+            // 检查新位置是否符合移动条件（例如是否为海洋）
+            if (!landProperties.Contains(potentialNewLocation))
             {
-                attemptCount++;
-                int directionX = Random.Range(-EnemymoveDistance, EnemymoveDistance + 1);
-                int directionY = Random.Range(-EnemymoveDistance, EnemymoveDistance + 1);
-
-                newX = Mathf.Clamp(x + directionX, 0, gridManager._width - 1);
-                newY = Mathf.Clamp(y + directionY, 0, gridManager._height - 1);
-
-                string potentialNewLocation = $"Tile {newX} {newY}";
-
-                // 检查新位置是否符合移动条件（例如是否为海洋）
-                if (!landProperties.Contains(potentialNewLocation))
-                {
-                    isValidMove = true; // 找到一个有效的移动位置
-                }
+                isValidMove = true; // 找到一个有效的移动位置
             }
+        }
 
-            if (isValidMove)
-            {
-                // 存储敌人预计的移动，而不是立即执行
-                string newLocation = $"Tile {newX} {newY}";
-                nextEnemyPositions[currentLocation] = newLocation;
-            }
+        if (isValidMove)
+        {
+            // 存储敌人预计的移动，而不是立即执行
+            nextEnemyPosition = $"Tile {newX} {newY}";
         }
     }
 
-    private void ApplyEnemyMoves()
+    private void ApplyEnemyMoves() // 实际移动敌人的方法
     {
-        foreach (var enemyMove in nextEnemyPositions)
-        {
-            if (landEnemyExist.Contains(enemyMove.Key))
-            {
-                landEnemyExist.Remove(enemyMove.Key);
-                landEnemyExist.Add(enemyMove.Value);
-            }
-        }
+        enemyPosition = nextEnemyPosition;
     }
 
     public void EnemyInfo()
     {
-        foreach (var enemyMove in nextEnemyPositions)
-        {
-            print($"敌人从 {enemyMove.Key} 预计移动到 {enemyMove.Value}");
-        }
+        print($"敌人从 {enemyPosition} 预计移动到 {nextEnemyPosition}");
     }
 }
+
 
 
 
