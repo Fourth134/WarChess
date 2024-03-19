@@ -20,6 +20,8 @@ public class ChessTile : MonoBehaviour
     public GameObject MoverangeHighlight;//储存绿色高光
     public GameObject AttackrangeHighlight;//储存红色高光
     public GameObject ScoutrangHighlight;//储存黄色高光
+    public GameObject TileText;//储存文字组件游戏对象
+    public TextMesh tileTextMesh; // 储存文字组件
 
 
     void Start()
@@ -32,6 +34,11 @@ public class ChessTile : MonoBehaviour
 
         // 获取当前游戏对象的名称
         objectName = gameObject.name;
+        if (tileTextMesh != null)
+        {
+            // 直接使用gameObject的name作为TextMesh的文本
+            tileTextMesh.text = gameObject.name;
+        }
 
         // 检查当前游戏对象的名称是否在 GameManager 的 landProperties 数组中，如果是，则将 sea 设置为 false
         foreach (string landProperty in gameManager.landProperties)
@@ -42,6 +49,7 @@ public class ChessTile : MonoBehaviour
                 break;
             }
         }
+
     }
 
     void Update()
@@ -50,6 +58,8 @@ public class ChessTile : MonoBehaviour
         ChessbordAdsorption();//棋盘吸附判断
         AttackMode();//打开地图攻击模式判断
         ScoutMode();//打开地图侦察模式判断
+        TextAdjust();//文字方向判断
+
     }
     public void Init(bool isOffset)
     {
@@ -61,6 +71,7 @@ public class ChessTile : MonoBehaviour
         if (!EventSystem.current.IsPointerOverGameObject())
         {
             _highlight.SetActive(true);
+            TileText.SetActive(true);
         }
     }
 
@@ -69,6 +80,7 @@ public class ChessTile : MonoBehaviour
         if (!EventSystem.current.IsPointerOverGameObject())
         {
             _highlight.SetActive(false);
+            TileText.SetActive(false);
         }
     }
 
@@ -228,6 +240,7 @@ public class ChessTile : MonoBehaviour
                     }
                     else
                     {
+                        intelligence.ShowEnemyInfo(gameManager.enemyPosition, gameManager.nextEnemyPosition, gameManager.TurnNum, objectName);//
                         print($"飞机起飞前往 {objectName} 进行侦察。该区域未发现敌人。");
                     }
 
@@ -239,6 +252,17 @@ public class ChessTile : MonoBehaviour
                     print("侦察机已经起飞。");
                 }
             }
+        }
+    }
+    private void TextAdjust()
+    {
+        if (tileTextMesh != null)
+        {
+            tileTextMesh.transform.LookAt(Camera.main.transform.position);
+
+            // 由于LookAt使得文本直接面向摄像机，可能导致文本倒置，所以下面的代码是调整文本使其正面朝向摄像机
+            // 这通过沿y轴旋转180度来实现，因为LookAt会使文本的背面朝向摄像机
+            tileTextMesh.transform.Rotate(0, 180, 0);
         }
     }
 }
