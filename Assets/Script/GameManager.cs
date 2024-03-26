@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     public GameObject CurrentObject;
     public GameObject CurrentSealand;
+
     public bool set = false;//判断是否触发棋盘中心吸附
     public bool ShowRangHighlight = false;//判断距离高光显示
 
