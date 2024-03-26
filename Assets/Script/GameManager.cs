@@ -14,13 +14,12 @@ public class GameManager : MonoBehaviour
     public int TurnNum=1;//储存当前回合数
     public bool attackmode = false;//储存当前是否是攻击模式
     public bool scoutmode = false;//储存当前是否是侦察模式
-    public bool Roundaction = true;//储存本回合是否完成一次动作
-    public int Scoutaction = 0;//储存是否可以进行侦察
-    public int ScoutTime;//储存侦察机进行准备的回合数
     public int EnemymoveDistance;//敌人移动距离
     public string targetTile;//敌人目标点位置
     public int tendency;//敌人向目标点移动倾向
+
     public GridManager gridManager;//读取GridManager脚本
+    public PlaneControl planeControl;//读取PlaneControl脚本
 
     public float CurrentObjectX;
     public float CurrentObjectZ; //当前控制物体记录的上一次正确坐标
@@ -55,16 +54,7 @@ public class GameManager : MonoBehaviour
         // 更新其他游戏状态
         attackmode = false;
         scoutmode = false;
-        Roundaction = true;
-        if (Scoutaction != 0)
-        {
-            Scoutaction++;
-        }
-        if (Scoutaction > ScoutTime)
-        {
-            Scoutaction = 0;
-            print("侦察机已经就绪");
-        }
+        planeControl.UpdatePlaneActions();//进行有关飞机的回合判断
     }
 
     public void AttackSwitch()
