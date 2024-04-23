@@ -73,7 +73,7 @@ public class EnemyState : MonoBehaviour
         int targetX = int.Parse(targetParts[1]);
         int targetY = int.Parse(targetParts[2]);
 
-        while (!isValidMove && attemptCount < 20)
+        while (!isValidMove && attemptCount < 100)
         {
             attemptCount++;
             int directionX = Random.Range(-enemyMoveDistance, enemyMoveDistance + 1);
@@ -115,8 +115,16 @@ public class EnemyState : MonoBehaviour
     // 用于外部修改敌人状态的方法
     public void UpdateStatus(EnemyStatus newStatus)
     {
-        status = newStatus;
-        Debug.Log($"敌舰状态更新为：{status}");
+        if (status != EnemyStatus.Sunk) // 如果敌舰未沉没，才更新状态
+        {
+            status = newStatus;
+            Debug.Log($"敌舰状态更新为：{status}");
+        }
+        else
+        {
+            Debug.Log("敌舰已经沉没");
+        }
     }
+
 }
 
