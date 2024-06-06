@@ -80,14 +80,14 @@ public class PlaneControl : MonoBehaviour
             }
             else
             {
-                attackResultInfo = $"攻击 {tileName} 成功，但未造成伤害。";
+                attackResultInfo = $"attck {tileName} Succeeded, but no harm was done.";
                 attackInfos.Add(attackResultInfo);
             }
         }
         else
         {
             Debug.Log($"飞机起飞前往 {tileName} 进行攻击。该区域未发现敌人。");
-            attackResultInfo = $"攻击 {tileName} 未发现敌人。";
+            attackResultInfo = $"attack {tileName} No enemy found.";
             attackInfos.Add(attackResultInfo);
         }
 
@@ -119,8 +119,8 @@ public class PlaneControl : MonoBehaviour
         }
 
         enemyState.UpdateStatus(newStatus);
-        string damageDescription = $"造成了{newStatus}。";
-        attackInfos.Add($"攻击 {enemyState.enemyPosition} 成功，" + damageDescription);
+        string damageDescription = $"caused{newStatus}。";
+        attackInfos.Add($"attack {enemyState.enemyPosition} Succeeded，" + damageDescription);
     }
 
     private void PerformScout(string tileName)//侦察判断方法
@@ -147,15 +147,15 @@ public class PlaneControl : MonoBehaviour
     public void ShowEnemyInfo(string enemyPosition, string nextEnemyPosition, int turnNum, string tileScouted)//发送全面的侦察信息
     {
         // 根据敌人是否被发现来构建不同的信息字符串
-        string scoutResult = enemyPosition == tileScouted ? "发现了敌人" : "并未发现敌人";
+        string scoutResult = enemyPosition == tileScouted ? "Enemy found" : "No Enemy found";
         // 构建要显示的信息字符串，包括回合数、侦察区域和侦察结果
-        string info = $"在第{turnNum}回合，向{tileScouted}派出了侦察机，{scoutResult}。";
+        string info = $"At{turnNum}Round，Send{tileScouted}a reconnaissance aircraft，{scoutResult}。";
 
         if (enemyPosition == tileScouted)
         {
             // 如果发现了敌人，追加敌人下回合预计的移动目标区域和当前状态
             string statusDescription = ConvertStatusToString(gameManager.enemyState.status);
-            info += $"\n敌人下回合移动的目标区域：{nextEnemyPosition}。\n当前状态：{statusDescription}。";
+            info += $"\nThe target area where the enemy will move next turn:{nextEnemyPosition}。\nCurrent status:{statusDescription}。";
         }
 
         // 调用方法将信息添加到缓存中

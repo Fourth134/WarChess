@@ -11,9 +11,6 @@
 #include "UnityPBSLighting.cginc"
 #include "AutoLight.cginc"
 
-#if AURA_LIGHTING || AURA_FOG
-    #include "Assets/Aura 2/Core/Code/Shaders/Aura.cginc"
-#endif
 
 struct Varyings
 {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UIElements;
 
 public class ChessTile : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class ChessTile : MonoBehaviour
     public GameManager gameManager;//引用游戏管理器脚本
     public Intelligence intelligence;//引用情报脚本
     public PlaneControl planeControl;//引用飞机控制脚本
+    public EnemyState enemyState;//引用敌人控制脚本*
 
     private string objectName; // 用于存储当前游戏对象的名称
     public GameObject MoverangeHighlight;//储存绿色高光
@@ -30,6 +32,7 @@ public class ChessTile : MonoBehaviour
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         intelligence = GameObject.Find("IntellManager").GetComponent<Intelligence>();
         planeControl = GameObject.Find("PlaneController").GetComponent<PlaneControl>();
+        enemyState = GameObject.Find("EnemyController").GetComponent<EnemyState>();
 
         Transform thisObjectTransform = transform;
         thisObjectPosition = thisObjectTransform.position; // 获取当前平台的当前位置（世界坐标）
@@ -61,7 +64,10 @@ public class ChessTile : MonoBehaviour
         AttackMode();//打开地图攻击模式判断
         ScoutMode();//打开地图侦察模式判断
         TextAdjust();//文字方向判断
-
+        if (gameManager.ShowEnemyPosition)
+        {
+            EnemyPositionDisplay();//
+        }
     }
     public void Init(bool isOffset)
     {
@@ -220,6 +226,18 @@ public class ChessTile : MonoBehaviour
             // 由于LookAt使得文本直接面向摄像机，可能导致文本倒置，所以下面的代码是调整文本使其正面朝向摄像机
             // 这通过沿y轴旋转180度来实现，因为LookAt会使文本的背面朝向摄像机
             tileTextMesh.transform.Rotate(0, 180, 0);
+        }
+    }
+
+    private void EnemyPositionDisplay()
+    {
+        if(objectName== enemyState.enemyPosition)
+        {
+            ScoutrangHighlight.SetActive(true);
+        }
+        else
+        {
+            ScoutrangHighlight.SetActive(false);
         }
     }
 }

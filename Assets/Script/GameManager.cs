@@ -27,6 +27,8 @@ public class GameManager : MonoBehaviour
     public Text turnCounterText; // UI Text元素，用于显示当前回合数
     public string[] landProperties;// String数组，用于存储地块是否为海洋
 
+    public bool ShowEnemyPosition = false;//
+
     // Start is called before the first frame update
 
     void Start()
@@ -42,14 +44,13 @@ public class GameManager : MonoBehaviour
         print("现在是" + TurnNum + "回合");
         if (turnCounterText != null)
         {
-            turnCounterText.text = "当前回合: " + TurnNum; // 更新UI Text显示当前回合数
+            turnCounterText.text = "Current round: " + TurnNum; // 更新UI Text显示当前回合数
         }
-        // 应用敌人的移动
-        enemyState.ApplyEnemyMoves();
-        // 计算敌人下一回合的移动
-        enemyState.CalculateNextEnemyMove();
-        // 在控制台输出敌人信息
-        enemyState.EnemyInfo();
+        enemyState.UpdateStatusBasedOnDamage();//根据敌人上一回合状态随机更新本回合状态
+
+        enemyState.ApplyEnemyMoves(); // 应用敌人的移动
+        enemyState.CalculateNextEnemyMove(); // 计算敌人下一回合的移动
+        enemyState.EnemyInfo();// 在控制台输出敌人信息
 
         // 更新其他游戏状态
         attackmode = false;
@@ -105,6 +106,28 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void ChangeShowEnemyPosition()
+    {
+        if (ShowEnemyPosition)
+        {
+            ShowEnemyPosition = false;
+        }
+        else
+        {
+            ShowEnemyPosition = true;
+        }
+    }
+
+    public void ExitGame()
+    {
+    #if UNITY_EDITOR
+        // 如果在编辑器中，停止播放模式
+        UnityEditor.EditorApplication.isPlaying = false;
+    #else
+        // 如果在构建后的游戏中，退出应用程序
+        Application.Quit();
+    #endif
+    }
 }
 
 

@@ -124,6 +124,7 @@ MonoBehaviour:
   thisObjectPosition: {x: 0, y: 0, z: 0}
   gameManager: {fileID: 0}
   intelligence: {fileID: 0}
+  planeControl: {fileID: 0}
   MoverangeHighlight: {fileID: 1919149732790530612}
   AttackrangeHighlight: {fileID: 1782908872556541179}
   ScoutrangHighlight: {fileID: 1693827368729257717}

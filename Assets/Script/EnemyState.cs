@@ -7,50 +7,75 @@ public enum EnemyStatus { Normal, MinorDamage, ModerateDamage, SevereDamage, Sun
 
 public class EnemyState : MonoBehaviour
 {
-    public string enemyPosition;
-    public string nextEnemyPosition;
-    public int enemyMoveDistance;
+    public string enemyPosition; // 当前敌人位置
+    public string nextEnemyPosition; // 预计下一回合敌人的位置
+    public int enemyMoveDistance; // 敌人移动距离
     public string targetTile;//目标格块
     public int tendency;//移动倾向（0-9）
-    public GridManager gridManager;
-    public GameManager gameManager;
+    public GridManager gridManager; // 引用GridManager脚本
+    public GameManager gameManager;// 引用GameManager脚本
     public EnemyStatus status = EnemyStatus.Normal;
+    public GameObject QuitMenu;//退出菜单
 
-    public void StartEnemyMove()
+    public void StartEnemyMove()//计算敌舰移动
     {
         CalculateNextEnemyMove();
         EnemyInfo();
     }
 
-    public void ApplyEnemyMoves()
+    public void ApplyEnemyMoves()//进行移动
     {
         if (status != EnemyStatus.Sunk)
         {
             enemyPosition = nextEnemyPosition;
         }
     }
+    public void UpdateStatusBasedOnDamage()
+    {
+        if (status == EnemyStatus.Normal || status == EnemyStatus.Sunk) return;
+
+        int chance = Random.Range(0, 3); // 0, 1, or 2
+
+        if (chance == 0) // 1/3 probability to change state
+        {
+            if (status > EnemyStatus.Normal && status < EnemyStatus.Sunk)
+            {
+                status--; // better
+            }
+        }
+        else if (chance == 1)
+        {
+            if (status < EnemyStatus.SevereDamage)
+            {
+                status++; // worse
+            }
+        }
+
+        Debug.Log($"Each round, the enemy ship status is updated to：{status}");
+    }
 
     public void CalculateNextEnemyMove()
     {
         if (status == EnemyStatus.Sunk)
         {
-            Debug.Log("敌舰已沉没，无法移动。");
+            Debug.Log("The enemy ship has sunk and cannot move.");
+            QuitMenu.SetActive(true);
             return;
         }
 
         bool canMove = true;
         if (status == EnemyStatus.ModerateDamage)
         {
-            canMove = Random.Range(0, 3) != 0; // 1/3 几率不能移动
+            canMove = Random.Range(0, 3) != 0; // 1/3 chance of being unable to move
         }
         else if (status == EnemyStatus.SevereDamage)
         {
-            canMove = Random.Range(0, 3) == 0; // 2/3 几率不能移动
+            canMove = Random.Range(0, 3) == 0; // 2/3 chance of being unable to move
         }
 
         if (!canMove)
         {
-            Debug.Log("由于受损，敌舰本回合无法移动。");
+            Debug.Log("Due to damage, the enemy ship cannot move this turn.");
             return;
         }
         else
@@ -123,6 +148,7 @@ public class EnemyState : MonoBehaviour
         else
         {
             Debug.Log("敌舰已经沉没");
+            QuitMenu.SetActive(true);
         }
     }
 
